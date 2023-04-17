@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Facades\Crypt;
 use Mail;
+use App\RoleUser;
 
 class LoginController extends Controller
 {
     public function login(Request $request){ 
+
         $validator = Validator::make($request->all(), [ 
             'email' => 'required|email',
             'password' => 'required'
@@ -26,11 +28,18 @@ class LoginController extends Controller
                 $auth = Auth::user(); 
                 $user = User::findOrFail($auth->id);
 
-                $role = $auth->role->name;
+                $roles = RoleUser::where('user_id', $auth->id)->get();
+                foreach($roles as $role){
+                    $role->user;
+                    $role->role;
+                }
+
+               // $role = $auth->role->name;
 
                 $success['token'] =  $auth->createToken('FinanzasWebApi')->accessToken; 
                 $success['authenticated'] = true;
                 $success['user_id'] = $auth->id;
+                $success['roles'] = $roles;
             
                // $success['role'] = $auth->role->name;
                 $success['name'] = $auth->name;

@@ -8,6 +8,8 @@ use App\Traits\GenerateUuid;
 class RoleUser extends Model
 {
     use GenerateUuid;
+
+    protected $table = "role_user";
     
     protected $fillable = [
         'user_id', 'role_id' 

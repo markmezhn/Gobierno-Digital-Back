@@ -13,26 +13,25 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('login', 'LoginController@login');
 Route::prefix('v1')->group(function(){
+            Route::post('login', 'LoginController@login');
     
-    Route::middleware('cors')->group(function(){
+            Route::group(['middleware' => 'auth:api'], function() {
+                //User Routes
+                Route::get('/users', 'UserController@getUsers');
+                Route::get('/user/{id}', 'UserController@getUser');
+                Route::post('user', 'UserController@createUser');
+                Route::put('/user/{id}', 'UserController@updateUser');
+                Route::delete('/user/{id}', 'UserController@deleteUser');
+
+                Route::get('/roles', 'RoleController@getRoles');
+                Route::get('/role/{id}', 'RoleController@getRole');
+                Route::post('role', 'RoleController@createRole');
+                Route::put('/role/{id}', 'RoleController@updateRole');
+                Route::delete('/role/{id}', 'RoleController@deleteRole');
+                
+                Route::post('change-password', 'UserController@changePassword');
+                //Route::get('/rolesuser', 'RoleController@getRolesuser');
         
-    
-        Route::post('user', 'UserController@createUser');
-    
-        
-        Route::group(['middleware' => 'auth:api'], function() {
-            //User Routes
-            Route::get('/users', 'UserController@getUsers');
-            Route::get('/user/{id}', 'UserController@getUser');
-            Route::post('user', 'UserController@createUser');
-            Route::put('/user/{id}', 'UserController@updateUser');
-            Route::delete('/user/{id}', 'UserController@deleteUser');
-            
-            Route::post('change-password', 'UserController@changePassword');
-            Route::get('/rolesuser', 'RoleController@getRolesuser')
-    
-        });
-     });
-});
+            });
+    });

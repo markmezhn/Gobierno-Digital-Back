@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Core;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Role;
 use App\User;
 use App\RoleUser;
+use Validator;
 
 class RoleController extends Controller
 {
@@ -36,6 +37,7 @@ class RoleController extends Controller
     public function createRole(Request $r){
         $v = Validator::make($r->all(), [
             'name' => 'required',
+            'slug' => 'required',
             'description' => 'required'
         ]);
         
@@ -58,6 +60,7 @@ class RoleController extends Controller
 
         $v = Validator::make($r->all(), [
             'name' => 'required',
+            'slug' => 'required',
             'description' => 'required'
         ]);
 
@@ -68,6 +71,8 @@ class RoleController extends Controller
         try {
             if($role = Role::findOrFail($r->id)){
                 $role->name = $r->name;
+                $role->slug = $r->slug;
+                $role->description = $r->description;
                 $role->save();
                 return response()->json(['success' => 'El rol se ha actualizado correctamente'], 200);
             } else {
@@ -84,7 +89,7 @@ class RoleController extends Controller
         }
         try {
             if(Role::findOrFail($id)){
-                if(count(User::where('role_id', $id)->get()) > 0){
+                if(count(RoleUser::where('role_id', $id)->get()) > 0){
                     return response()->json(['error' => 'No es posible eliminar el rol, está asignado a uno o más usuarios'], 400);
                 } else {
                     Role::destroy($id);

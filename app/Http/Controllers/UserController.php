@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Core;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,8 +16,12 @@ class UserController extends Controller
     public function getUsers(){
         try {
             $users = User::all();
-             foreach($users as $user){
-                $user->role;
+            foreach($users as $user){
+                $roles = RoleUser::where('user_id', $user->id)->get();
+                foreach($roles as $role){
+                    $role->role;
+                }
+                $user['roles'] = $roles;
             }
             return response()->json(["success" => $users], 200);
         } catch (\Exception $e) {
@@ -28,7 +32,6 @@ class UserController extends Controller
     public function getUser($id){
         try {
             $user = User::findOrFail($id);
-            $user->role;
             return response()->json(["success" => $user ]);
         } catch (\Exception $e){
             return response()->json(["error" => "Imposible mostrar usuario: ".$e->getMessage()]);
@@ -39,7 +42,6 @@ class UserController extends Controller
         $v = Validator::make($r->all(), [
             'name' => 'required',
             'email' => 'required|email',
-            'role_id' => 'required',
             'password' => 'required',
             'cpassword' => 'required|same:password'
         ]);
@@ -49,7 +51,6 @@ class UserController extends Controller
         }
         try {
             $r->merge(['password' => bcrypt($r->password)]);
-            $r->merge(['username' => $r->email]);
             $user = User::create($r->all());
             return response()->json(["success" => "El usuario nuevo se ha creado correctamente.", "user" => $user], 200);
         } catch (\Exception $e) {
@@ -63,7 +64,6 @@ class UserController extends Controller
         }
         $v = Validator::make($r->all(), [
             'name' => 'required',
-            'username' => 'required|max:30',
             'email' => 'required|email',
             'password' => 'required',
             'cpassword' => 'required|same:password'
