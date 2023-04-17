@@ -40,6 +40,13 @@ class LoginController extends Controller
                 $success['authenticated'] = true;
                 $success['user_id'] = $auth->id;
                 $success['roles'] = $roles;
+                $success['isAdmin'] = false;
+
+                foreach($roles as $role){
+                    if($role->role->slug == "admin"){
+                        $success['isAdmin'] = true;
+                    }
+                }
             
                // $success['role'] = $auth->role->name;
                 $success['name'] = $auth->name;
