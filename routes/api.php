@@ -23,15 +23,13 @@ Route::prefix('v1')->group(function(){
                 Route::post('user', 'UserController@createUser');
                 Route::put('/user/{id}', 'UserController@updateUser');
                 Route::delete('/user/{id}', 'UserController@deleteUser');
+                Route::post('/user/assign-role', 'UserController@assignRole');
 
                 Route::get('/roles', 'RoleController@getRoles');
                 Route::get('/role/{id}', 'RoleController@getRole');
                 Route::post('role', 'RoleController@createRole');
                 Route::put('/role/{id}', 'RoleController@updateRole');
                 Route::delete('/role/{id}', 'RoleController@deleteRole');
-                
-                Route::post('change-password', 'UserController@changePassword');
-                //Route::get('/rolesuser', 'RoleController@getRolesuser');
         
             });
     });
