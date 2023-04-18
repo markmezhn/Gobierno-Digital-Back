@@ -121,7 +121,22 @@ class UserController extends Controller
     }
 
     public function assignRole(Request $r){
-        
+        $v = Validator::make($r->all(), [
+            'role_id' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        if ($v->fails()) {
+            return response()->json(['error' => $v->errors()], 400);
+        }
+
+        try{
+            RoleUser::where('user_id',$r->user_id)->delete();
+            RoleUser::create($r->all());
+            return response()->json(['success' => 'Se ha asignado el rol seleccionado al usuario.'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Imposible asignar rol: '.$e->getMessage()], 500);
+        }
     }
 
 }
